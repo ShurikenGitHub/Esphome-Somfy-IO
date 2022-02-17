@@ -1,0 +1,182 @@
+substitutions:
+  devicename: somfynode
+  upper_devicename: Somfynode
+  
+esphome:
+  name: $devicename
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${devicename} Fallback"
+    password: !secret esphome_fallback_password
+
+captive_portal:
+logger:
+api:
+ota:
+
+sensor:
+  - platform: uptime
+    name: "Uptime Sensor ${upper_devicename}"
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor ${upper_devicename}"
+    update_interval: 60s
+
+output:
+  - platform: gpio
+    id: 'up'
+    pin: D0
+    inverted: yes
+  - platform: gpio
+    id: 'my'
+    pin: D1
+    inverted: yes
+  - platform: gpio
+    id: 'down'
+    pin: D2
+    inverted: yes
+  - platform: gpio
+    id: 'chan1'
+    pin: D5
+    inverted: yes
+  - platform: gpio
+    id: 'chan2'
+    pin: D6
+    inverted: yes
+  - platform: gpio
+    id: 'chan3'
+    pin: D7
+    inverted: yes
+  - platform: gpio
+    id: 'chan4'
+    pin: RX
+    inverted: yes
+
+button:
+  - platform: restart
+    name: "${upper_devicename} Restart"
+  - platform: output
+    name: "Somfy Up Key"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'up'
+    id: up2
+  - platform: output
+    name: "Somfy My Key"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'my'
+    id: my2
+  - platform: output
+    name: "Somfy Down Key"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'down'
+    id: down2  
+  - platform: output
+    name: "Somfy Channel 1"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'chan1'
+    id: channel1 
+  - platform: output
+    name: "Somfy Channel 2"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'chan2'
+    id: channel2
+  - platform: output
+    name: "Somfy Channel 3"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'chan3'
+    id: channel3
+  - platform: output
+    name: "Somfy Channel 4"
+    duration: 100ms
+    disabled_by_default: true
+    output: 'chan4'
+    id: channel4
+    
+cover:
+  - platform: time_based
+    name: "Cover 1"
+    assumed_state: true
+    has_built_in_endstop: true
+    open_action:
+      - button.press: channel1
+      - delay: 100ms
+      - button.press: up2
+    open_duration: 27.5s
+    close_action:
+      - button.press: channel1
+      - delay: 100ms
+      - button.press: down2
+    close_duration: 25s
+    stop_action:
+      - button.press: channel1
+      - delay: 100ms
+      - button.press: my2
+
+  - platform: time_based
+    name: "Cover 2"
+    assumed_state: true
+    has_built_in_endstop: true
+    open_action:
+      - button.press: channel2
+      - delay: 100ms
+      - button.press: up2
+    open_duration: 27.5s
+    close_action:
+      - button.press: channel2
+      - delay: 100ms
+      - button.press: down2
+    close_duration: 25s
+    stop_action:
+      - button.press: channel2
+      - delay: 100ms
+      - button.press: my2
+      
+  - platform: time_based
+    name: "Cover 3"
+    assumed_state: true
+    has_built_in_endstop: true
+    open_action:
+      - button.press: channel3
+      - delay: 100ms
+      - button.press: up2
+    open_duration: 27.5s
+    close_action:
+      - button.press: channel3
+      - delay: 100ms
+      - button.press: down2
+    close_duration: 25s
+    stop_action:
+      - button.press: channel3
+      - delay: 100ms
+      - button.press: my2
+
+  - platform: time_based
+    name: "Cover 4"
+    assumed_state: true
+    has_built_in_endstop: true
+    open_action:
+      - button.press: channel4
+      - delay: 100ms
+      - button.press: up2
+    open_duration: 35s
+    close_action:
+      - button.press: channel4
+      - delay: 100ms
+      - button.press: down2
+    close_duration: 33s
+    stop_action:
+      - button.press: channel4
+      - delay: 100ms
+      - button.press: my2
